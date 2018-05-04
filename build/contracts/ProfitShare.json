@@ -1,0 +1,181 @@
+{
+  "contractName": "ProfitShare",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058207dc38090be63d327647a37a9310a3fcb0c7af5f05bd35a569f55a6aba27bde2e0029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a723058207dc38090be63d327647a37a9310a3fcb0c7af5f05bd35a569f55a6aba27bde2e0029",
+  "sourceMap": "28:62:1:-;;;56:31;8:9:-1;5:2;;;30:1;27;20:12;5:2;56:31:1;28:62;;;;;;",
+  "deployedSourceMap": "28:62:1:-;;;;;",
+  "source": "pragma solidity ^0.4.17;\r\n\r\ncontract ProfitShare {\r\n    constructor() public {\r\n\r\n    }\r\n}",
+  "sourcePath": "C:\\Users\\Adam Flesher\\repos\\profit-share\\contracts\\ProfitShare.sol",
+  "ast": {
+    "absolutePath": "/C/Users/Adam Flesher/repos/profit-share/contracts/ProfitShare.sol",
+    "exportedSymbols": {
+      "ProfitShare": [
+        63
+      ]
+    },
+    "id": 64,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 63,
+        "linearizedBaseContracts": [
+          63
+        ],
+        "name": "ProfitShare",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 61,
+              "nodeType": "Block",
+              "src": "77:10:1",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 62,
+            "implemented": true,
+            "isConstructor": true,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 59,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "67:2:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 60,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "77:0:1"
+            },
+            "scope": 63,
+            "src": "56:31:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 64,
+        "src": "28:62:1"
+      }
+    ],
+    "src": "0:90:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/C/Users/Adam Flesher/repos/profit-share/contracts/ProfitShare.sol",
+    "exportedSymbols": {
+      "ProfitShare": [
+        63
+      ]
+    },
+    "id": 64,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:1"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 63,
+        "linearizedBaseContracts": [
+          63
+        ],
+        "name": "ProfitShare",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 61,
+              "nodeType": "Block",
+              "src": "77:10:1",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 62,
+            "implemented": true,
+            "isConstructor": true,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 59,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "67:2:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 60,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "77:0:1"
+            },
+            "scope": 63,
+            "src": "56:31:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 64,
+        "src": "28:62:1"
+      }
+    ],
+    "src": "0:90:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.23+commit.124ca40d.Emscripten.clang"
+  },
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x11097b57cb6aed582b61dfb086a7a20c5de68dae",
+      "transactionHash": "0x70eb350b76030d16922842a63c23bb5887dca1e448eac67e7adb1a7260942456"
+    }
+  },
+  "schemaVersion": "2.0.0",
+  "updatedAt": "2018-05-03T23:28:17.761Z"
+}
