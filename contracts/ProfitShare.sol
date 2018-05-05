@@ -24,7 +24,11 @@ contract ProfitShare {
     
     constructor() public payable {
         
-    }  
+    } 
+
+    function getOutstandingVotes() public view returns (uint) {
+        return outstandingVotes;
+    }
 
     function percent(uint numerator, uint denominator, uint precision) public pure returns(uint quotient) {
             // caution, check safe-to-multiply here
