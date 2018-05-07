@@ -12,6 +12,16 @@ function add (a, b) {
   return res
 }
 
+function didComplete(aPromise) {
+  return new Promise((resolve) => {
+    aPromise().then(() => {
+      resolve(true);
+    }).catch(() => {
+      resolve(false);
+    });
+  });
+}
+
 contract('ProfitShare', function (accounts) {
   it ("should have a blance of zero", function () {
     return ProfitShare.deployed().then(function (instance) {
@@ -68,29 +78,12 @@ contract('ProfitShare', function (accounts) {
     }).then(() => {
       return ps.removeShareholder(shareholder);
     }).then(() => {
-      return Promise.all([ps.outstandingVotes.call(), ps.outstandingShares.call(), ps.shareholders.call(shareholder), ps.arraySize.call()]);
+      return Promise.all([ps.outstandingVotes.call(), ps.outstandingShares.call(), ps.shareholders.call(shareholder)]);
     }).then((resp) => {
       assert.equal(resp[0].toNumber(), currentVotes, "Votes");
       assert.equal(resp[1].toNumber(), currentShares, "Shares");
       assert.equal(resp[2][0].toNumber(), 0, "Votes");
       assert.equal(resp[2][1].toNumber(), 0, "Shares");
-    });
-  });
-
-  it ("should send funds", () => {
-    var ps,
-      funds;
-
-    return ProfitShare.deployed().then((instance) => {
-      ps = instance;
-      return web3.eth.getBalance(accounts[6]);
-    }).then((resp) => {
-      funds = resp.toNumber();
-      return ps.sendTest(accounts[6]);
-    }).then(() => {
-      return web3.eth.getBalance(accounts[6]);
-    }).then((balance) => {
-      assert.equal(balance.toNumber(), 100 + funds, "Received balance");
     });
   });
 
@@ -131,6 +124,18 @@ contract('ProfitShare', function (accounts) {
       assert.equal(resp[0].valueOf(), shareholder1.e, "Shareholder 1 value");
       assert.equal(resp[1].valueOf(), shareholder2.e, "Shareholder 2 value");
       assert.equal(resp[2].valueOf(), shareholder3.e, "Shareholder 3 value");
+    });
+  });
+
+  it("should not disburse funds", () => {
+    var ps;
+    return ProfitShare.deployed().then((instance) => {
+      ps = instance;
+      return web3.eth.sendTransaction({from: accounts[0], to: ProfitShare.address, value: 10000});
+    }).then(() => {  
+      return didComplete(ps.disburse);
+    }).then((completed) => {
+      assert.isFalse(completed, "Able to disburse funds");
     });
   });
 });

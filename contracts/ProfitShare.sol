@@ -19,46 +19,42 @@ contract ProfitShare {
     uint public lastPayout;
     uint public minPayoutBalance = 500 wei;
     uint public payoutCooldown = 23 hours + 30 minutes;
+    address escrowManager;
 
     mapping (address => Shareholder) public shareholders;
-    address[] owners;
+    address[] shareholderArray;
     
     constructor() public payable {
+        escrowManager = msg.sender;
+    }
+
+    modifier onlyShareholder() {
+        require(shareholders[msg.sender].shares != 0 || msg.sender == escrowManager);
+        _;
     } 
 
     function _removeOwner(address _address) internal {
-        address[] storage addresses = owners;
-        if (addresses.length == 0) {
+        if (shareholderArray.length == 0) {
             return;
         }
         bool found = false;
-        for (uint i = 0; i < addresses.length; i++) {
+        for (uint i = 0; i < shareholderArray.length; i++) {
             if (found) {
-                addresses[i - 1] = addresses[i];
+                shareholderArray[i - 1] = shareholderArray[i];
             }
 
             if (!found) {
-                found = addresses[i] == _address;
+                found = shareholderArray[i] == _address;
             }
         }
 
         if (found) {
-            addresses.length--;
+            shareholderArray.length--;
         }
     }
 
-    function arraySize() external view returns (uint) {
-        return owners.length;
-    }
-
-    function getOutstandingVotes() public view returns (uint) {
-        return outstandingVotes;
-    }
-
     function percent(uint numerator, uint denominator, uint precision) public pure returns(uint quotient) {
-            // caution, check safe-to-multiply here
         uint _numerator = numerator * 10 ** (precision+1);
-        // with rounding of last digit
         uint _quotient = ((_numerator / denominator) + 5) / 10;
         return ( _quotient);
     }
@@ -75,7 +71,7 @@ contract ProfitShare {
         shareholders[_shareholder] = Shareholder(_votes, _shares);
         outstandingVotes = outstandingVotes.add(_votes);
         outstandingShares = outstandingShares.add(_shares);
-        owners.push(_shareholder);
+        shareholderArray.push(_shareholder);
     }
 
     function addShareholder(address _shareholder, uint32 _votes, uint32 _shares) external {
@@ -91,19 +87,12 @@ contract ProfitShare {
     function () public payable {
     }
 
-    function sendTest(address _address) external {
-        _address.transfer(100);
-    }
-
-    function disburse() external {
-        // check payout cooldown
-        // itterate shareholders
-        // get shareholder pct / total shares
-        // transfer balance based on pct
+    function disburse() onlyShareholder external {
         require((now > lastPayout + payoutCooldown) && (address(this).balance > minPayoutBalance));
+        lastPayout = now;
         uint balance = address(this).balance;
-        for (uint i = 0; i < owners.length; i++) {
-            address owner = owners[i];
+        for (uint i = 0; i < shareholderArray.length; i++) {
+            address owner = shareholderArray[i];
             Shareholder storage shareholder = shareholders[owner];
             uint share = (percent(shareholder.shares, outstandingShares, 4) * balance) / 10000;
             owner.transfer(share);
