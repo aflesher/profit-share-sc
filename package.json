@@ -1,0 +1,26 @@
+{
+  "name": "profit-share",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./test/profit\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[Cshare.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "tuffle test ./test/profitshare.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aflesher/profit-share-sc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aflesher/profit-share-sc/issues"
+  },
+  "homepage": "https://github.com/aflesher/profit-share-sc#readme"
+}

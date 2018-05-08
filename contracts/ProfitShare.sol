@@ -27,7 +27,7 @@ contract ProfitShare {
 
     uint votesForNewEscrowShares;
     uint votesAgainstNewEscrowShares;
-    uint proposedEscrowShares;
+    uint public proposedEscrowShares;
     mapping(address => bool) votersForNewEscrowShares;
 
     
@@ -151,5 +151,6 @@ contract ProfitShare {
         if (votesForNewEscrowShares > votesAgainstNewEscrowShares) {
             escrowShares = proposedEscrowShares;
         }
+        _cleanupEscrowShareVote();
     }
 }

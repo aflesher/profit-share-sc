@@ -1,4 +1,5 @@
-var ProfitShare = artifacts.require("ProfitShare");
+var ProfitShare = artifacts.require("ProfitShare"),
+  _ = require('lodash');
 
 function add (a, b) {
   let res = '', c = 0
@@ -136,6 +137,47 @@ contract('ProfitShare', function (accounts) {
       return didComplete(ps.disburse);
     }).then((completed) => {
       assert.isFalse(completed, "Able to disburse funds");
+    });
+  });
+
+  it ("should change escrow votes", () => {
+    var shareholder1 = { a: accounts[2], v: 700, s: 0 },
+    shareholder2 = { a: accounts[3], v: 500, s: 0 },
+    shareholder3 = { a: accounts[4], v: 400, s: 0 },
+    escrowShares = 1000,
+    ps;
+
+    return ProfitShare.deployed().then((instance) => {
+      ps = instance;
+      return Promise.all([
+        ps.addShareholder(shareholder1.a, shareholder1.v, shareholder1.s),
+        ps.addShareholder(shareholder2.a, shareholder2.v, shareholder2.s),
+        ps.addShareholder(shareholder3.a, shareholder3.v, shareholder3.s),
+        ps.changeEscrowShares(escrowShares)
+      ]);
+    }).then((resp) => {
+      assert.notEqual(_.findIndex(resp[3].logs, {event: 'ChangeEscrowVotesProposed'}), -1, "event fired");
+      return Promise.all([
+        ps.outstandingVotes.call(),
+        ps.proposedEscrowShares.call()
+      ]);
+    }).then((resp) => {
+      assert.equal(resp[0].toNumber(), shareholder1.v + shareholder2.v + shareholder3.v, "Votes counted");
+      assert.equal(resp[1].toNumber(), escrowShares, "Escrow Shares request added");
+      return ps.voteForChangeEscrowShares(true, {from: shareholder1.a});
+    }).then((resp) => {
+      return ps.voteForChangeEscrowShares(true, {from: shareholder2.a});
+    }).then((resp) => {
+      assert.notEqual(_.findIndex(resp.logs, {event: 'ChangeEscrowVoteComplete'}), -1, "event fired");
+      return ps.completeVoteForChangeEscrowShares({from: accounts[0]});
+    }).then(() => {
+      return Promise.all([
+        ps.escrowShares.call(),
+        ps.proposedEscrowShares.call()
+      ]);
+    }).then((resp) => {
+      assert.equal(resp[0].toNumber(), escrowShares, "new escrow shares");
+      assert.equal(resp[1].toNumber(), 0, "vote has been reset");
     });
   });
 });
