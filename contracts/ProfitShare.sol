@@ -15,14 +15,21 @@ contract ProfitShare {
 
     uint public outstandingVotes;
     uint public outstandingShares;
-    uint public companyShares = 1000;
     uint public lastPayout;
     uint public minPayoutBalance = 500 wei;
     uint public payoutCooldown = 23 hours + 30 minutes;
-    address escrowManager;
 
     mapping (address => Shareholder) public shareholders;
     address[] shareholderArray;
+
+    address public escrowManager;
+    uint public escrowShares;
+
+    uint votesForNewEscrowShares;
+    uint votesAgainstNewEscrowShares;
+    uint proposedEscrowShares;
+    mapping(address => bool) votersForNewEscrowShares;
+
     
     constructor() public payable {
         escrowManager = msg.sender;
@@ -31,7 +38,12 @@ contract ProfitShare {
     modifier onlyShareholder() {
         require(shareholders[msg.sender].shares != 0 || msg.sender == escrowManager);
         _;
-    } 
+    }
+
+    modifier onlyVoter() {
+        require(shareholders[msg.sender].votes != 0);
+        _;
+    }
 
     function _removeOwner(address _address) internal {
         if (shareholderArray.length == 0) {
@@ -92,11 +104,52 @@ contract ProfitShare {
         lastPayout = now;
         uint balance = address(this).balance;
         for (uint i = 0; i < shareholderArray.length; i++) {
-            address owner = shareholderArray[i];
-            Shareholder storage shareholder = shareholders[owner];
-            uint share = (percent(shareholder.shares, outstandingShares, 4) * balance) / 10000;
-            owner.transfer(share);
+            address shareholder = shareholderArray[i];
+            uint share = (percent(shareholders[shareholder].shares, outstandingShares, 4) * balance) / 10000;
+            shareholder.transfer(share);
         }
 
+    }
+
+    event ChangeEscrowVoteComplete();
+    event ChangeEscrowVotesProposed(uint shares);
+
+    function changeEscrowShares(uint _shares) external {
+        require(proposedEscrowShares == 0);
+        proposedEscrowShares = _shares;
+        emit ChangeEscrowVotesProposed(proposedEscrowShares);
+    }
+
+    function voteForChangeEscrowShares(bool _isFor) onlyVoter  external {
+        require(!votersForNewEscrowShares[msg.sender]);
+        votersForNewEscrowShares[msg.sender] = true;
+        if (_isFor) {
+            votesForNewEscrowShares = votesForNewEscrowShares.add(shareholders[msg.sender].votes);
+            if (votesForNewEscrowShares > outstandingVotes / 2) {
+                emit ChangeEscrowVoteComplete();
+            }
+        } else {
+            votesAgainstNewEscrowShares = votesAgainstNewEscrowShares.add(shareholders[msg.sender].votes);
+            if (votesAgainstNewEscrowShares >= outstandingVotes / 2) {
+                emit ChangeEscrowVoteComplete();
+            }
+        }
+    }
+
+    function _cleanupEscrowShareVote() private {
+        proposedEscrowShares = 0;
+        votesForNewEscrowShares = 0;
+        votesAgainstNewEscrowShares = 0;
+        for (uint i = 0; i < shareholderArray.length; i++) {
+            delete votersForNewEscrowShares[shareholderArray[i]];
+        }
+    }
+
+    // only owner
+    function completeVoteForChangeEscrowShares() external {
+        require((votesForNewEscrowShares > outstandingVotes / 2) || (votesAgainstNewEscrowShares >= outstandingVotes / 2));
+        if (votesForNewEscrowShares > votesAgainstNewEscrowShares) {
+            escrowShares = proposedEscrowShares;
+        }
     }
 }
